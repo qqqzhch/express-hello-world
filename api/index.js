@@ -71,14 +71,12 @@ app.use('/quote',async (req,res)=>{
   let chainid=req.query.chainid
 
   let urlbase=UrlList_0x[chainid];
-
+  console.log('urlbase',urlbase)
   console.log(req.query)
 
-  let params=JSON.stringify({tx_hash:txhash})
-  
-  console.log('params',params)
+
   const url=`${urlbase}swap/v1/quote?buyToken=${buyToken}&sellToken=${sellToken}&sellAmount=${sellAmount}`
-  console.log(url)
+  console.log('url',url)
   let data = await get0x(url)
   console.log(data)
   res.json(data)
