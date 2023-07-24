@@ -4,6 +4,8 @@ const app = express()
 var proxy = require('express-http-proxy');
 const fetch = require('cross-fetch');
 var cors = require('cors')
+require('dotenv').config()
+const {UrlList_0x}= require('./constants/relayer')
 
 async function request(
   url, 
@@ -21,6 +23,12 @@ let  post=(url, body) =>
                           "Content-Type": "application/json",
         // 'Content-Type': 'application/x-www-form-urlencoded',
       }, })
+let get0x=(url)=>
+      request(url, { method: 'get',   
+                        headers: {
+                                "Content-Type": "application/json",
+                                "0x-api-key":process.env.APIkey
+            }, })
 
 // #############################################################################
 // Logs all request paths and method
@@ -42,6 +50,29 @@ app.use('/api',async (req,res)=>{
   res.json(data)
   .end()
 });
+
+app.use('/quote',async (req,res)=>{
+  //https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote
+  let txhash=req.query.txhash
+  let buyToken= req.query.buyToken
+  let sellToken= req.query.sellToken
+  let sellAmount=req.query.sellAmount
+  let chainid=req.query.chainid
+
+  let urlbase=UrlList_0x[chainid];
+
+  console.log(req.query)
+
+  let params=JSON.stringify({tx_hash:txhash})
+  
+  console.log('params',params)
+  const url=`${urlbase}swap/v1/quote?buyToken=${buyToken}&sellToken=${sellToken}&sellAmount=${sellAmount}`
+  console.log(url)
+  let data = await get0x(url)
+  console.log(data)
+  res.json(data)
+  .end()
+})
 
 // #############################################################################
 // This configures static hosting for files in /public that have the extensions

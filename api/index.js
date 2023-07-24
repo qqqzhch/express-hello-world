@@ -3,7 +3,8 @@ const path = require("path");
 const app = express()
 var proxy = require('express-http-proxy');
 const fetch = require('cross-fetch');
-var cors = require('cors')
+var cors = require('cors');
+const {UrlList_0x}= require('../constants/relayer')
 
 async function request(
   url, 
@@ -20,6 +21,12 @@ let  post=(url, body) =>
                   headers: {
                           "Content-Type": "application/json",
         // 'Content-Type': 'application/x-www-form-urlencoded',
+      }, })
+let get0x=(url)=>
+request(url, { method: 'get',   
+                  headers: {
+                          "Content-Type": "application/json",
+                          "0x-api-key":process.env.APIkey
       }, })
 
 // #############################################################################
@@ -42,7 +49,41 @@ app.use('/api',async (req,res)=>{
   res.json(data)
   .end()
 });
+//https://0x.org/docs/introduction/0x-cheat-sheet
+/*
+Ethereum (Mainnet): https://api.0x.org/
+Ethereum (Goerli): https://goerli.api.0x.org/
+Polygon: https://polygon.api.0x.org/
+Polygon (Mumbai): https://mumbai.api.0x.org
+Binance Smart Chain: https://bsc.api.0x.org/
+Optimism: https://optimism.api.0x.org/
+Fantom: https://fantom.api.0x.org/
+Celo: https://celo.api.0x.org/
+Avalanche: https://avalanche.api.0x.org/
+Arbitrum: https://arbitrum.api.0x.org/
+*/
+app.use('/quote',async (req,res)=>{
+  //https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote
+  let txhash=req.query.txhash
+  let buyToken= req.query.buyToken
+  let sellToken= req.query.sellToken
+  let sellAmount=req.query.sellAmount
+  let chainid=req.query.chainid
 
+  let urlbase=UrlList_0x[chainid];
+
+  console.log(req.query)
+
+  let params=JSON.stringify({tx_hash:txhash})
+  
+  console.log('params',params)
+  const url=`${urlbase}swap/v1/quote?buyToken=${buyToken}&sellToken=${sellToken}&sellAmount=${sellAmount}`
+  console.log(url)
+  let data = await get0x(url)
+  console.log(data)
+  res.json(data)
+  .end()
+})
 // #############################################################################
 // This configures static hosting for files in /public that have the extensions
 // listed in the array.
