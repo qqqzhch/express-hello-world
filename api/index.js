@@ -38,6 +38,27 @@ app.use(function (req, res, next) {
   console.log(`[${new Date().toISOString()}] ${req.ip} ${req.method} ${req.path}`);
   next();
 });
+app.use('/quote',async (req,res)=>{
+  //https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote
+  let txhash=req.query.txhash
+  let buyToken= req.query.buyToken
+  let sellToken= req.query.sellToken
+  let sellAmount=req.query.sellAmount
+  let chainid=req.query.chainid
+
+  let urlbase=UrlList_0x[chainid];
+  console.log('urlbase',urlbase)
+  console.log('process.env.APIkey',process.env.APIkey)
+  console.log(req.query)
+
+
+  const url=`${urlbase}swap/v1/quote?buyToken=${buyToken}&sellToken=${sellToken}&sellAmount=${sellAmount}`
+  console.log('url',url)
+  let data = await get0x(url)
+  console.log(data)
+  res.json(data)
+  .end()
+})
 
 app.use('/api',async (req,res)=>{
   let txhash=req.query.txhash
@@ -62,26 +83,7 @@ Celo: https://celo.api.0x.org/
 Avalanche: https://avalanche.api.0x.org/
 Arbitrum: https://arbitrum.api.0x.org/
 */
-app.use('/quote',async (req,res)=>{
-  //https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote
-  let txhash=req.query.txhash
-  let buyToken= req.query.buyToken
-  let sellToken= req.query.sellToken
-  let sellAmount=req.query.sellAmount
-  let chainid=req.query.chainid
 
-  let urlbase=UrlList_0x[chainid];
-  console.log('urlbase',urlbase)
-  console.log(req.query)
-
-
-  const url=`${urlbase}swap/v1/quote?buyToken=${buyToken}&sellToken=${sellToken}&sellAmount=${sellAmount}`
-  console.log('url',url)
-  let data = await get0x(url)
-  console.log(data)
-  res.json(data)
-  .end()
-})
 // #############################################################################
 // This configures static hosting for files in /public that have the extensions
 // listed in the array.
