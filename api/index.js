@@ -48,14 +48,13 @@ app.use('/api/quote',async (req,res)=>{
 
   let urlbase=UrlList_0x[chainid];
   console.log('urlbase',urlbase)
-  console.log('process.env.APIkey',process.env.APIkey)
-  console.log(req.query)
 
+  
 
   const url=`${urlbase}swap/v1/quote?buyToken=${buyToken}&sellToken=${sellToken}&sellAmount=${sellAmount}`
   console.log('url',url)
   let data = await get0x(url)
-  console.log(data)
+  
   res.json(data)
   .end()
 })
