@@ -38,7 +38,7 @@ app.use(function (req, res, next) {
   console.log(`[${new Date().toISOString()}] ${req.ip} ${req.method} ${req.path}`);
   next();
 });
-app.use('/quote',async (req,res)=>{
+app.use('/api/quote',async (req,res)=>{
   //https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote
   let txhash=req.query.txhash
   let buyToken= req.query.buyToken
