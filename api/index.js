@@ -58,7 +58,16 @@ app.use('/api/quote',async (req,res)=>{
   res.json(data)
   .end()
 })
-
+app.use('/api/search',async (req,res)=>{
+  let txhash=req.query.txhash
+  console.log(req.query)
+  let params=JSON.stringify({tx_hash:txhash})
+  console.log('params',params)
+  let data = await post('http://3.89.186.206:12000/search',params )
+  console.log(data)
+  res.json(data)
+  .end()
+});
 app.use('/api',async (req,res)=>{
   let txhash=req.query.txhash
   console.log(req.query)
